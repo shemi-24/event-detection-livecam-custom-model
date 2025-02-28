@@ -998,7 +998,116 @@
 # # Release resources
 # cap.release()
 # cv2.destroyAllWindows()
-#-------------------------------------
+#-------------------------------------like this have not get the email msg------
+# import cv2
+# import json
+# from ultralytics import YOLO
+# from cvzone.Utils import putTextRect
+# import smtplib
+# from email.mime.text import MIMEText
+# from email.mime.multipart import MIMEMultipart
+
+# # Email alert function
+# def send_email(to_email, subject, message):
+#     sender_email = "support@zoftcares.in"  # Replace with your email
+#     sender_password = "U_Dr*0R($q&?"        # Replace with your email password
+
+#     msg = MIMEMultipart()
+#     msg["From"] = sender_email
+#     msg["To"] = to_email
+#     msg["Subject"] = subject
+#     msg.attach(MIMEText(message, "plain"))
+
+#     try:
+#         server = smtplib.SMTP("mail.zoftcares.in", 465)  # Change SMTP settings if using another provider
+#         server.login(sender_email, sender_password)
+#         server.sendmail(sender_email, to_email, msg.as_string())
+#         server.quit()
+#         print("Email sent successfully!")
+#         return True
+#     except Exception as e:
+#         print(f"Email sending failed: {e}")
+#         return False
+
+# # Load trained YOLO model
+# model = YOLO('C:\\kaggle_incident_detection\\kaggle\\runs\\detect\\train_dataset\\weights\\best.pt')
+
+# # Open video file
+# cap = cv2.VideoCapture('hashir_fall.mp4')
+
+# # Track previous Y position for fall detection
+# previous_y_positions = {}
+# fall_threshold = 130  # Adjust as needed
+# email_sent = False  # Track whether the email has been sent
+
+# while cap.isOpened():
+#     ret, frame = cap.read()
+#     if not ret:
+#         break  # Exit if no frame
+
+#     # Run YOLO inference
+#     results = model(frame)
+
+#     for result in results:
+#         boxes = result.boxes  # Get detected objects
+
+#         for box in boxes:
+#             class_id = int(box.cls)  # Get class ID
+#             confidence = float(box.conf)  # Get confidence score
+#             x1, y1, x2, y2 = map(int, box.xyxy[0])  # Bounding box coordinates
+
+#             # Get class name
+#             class_name = model.names[class_id]
+#             print(f"Detected: {class_name} (Confidence: {confidence:.2f})")  # Debugging
+
+#             if confidence > 0.6:  # Confidence threshold
+#                 person_id = class_id  # Assuming only one person detected at a time
+
+#                 if class_name == "Walking":
+#                     color = (0, 255, 0)  # Green for walking
+#                     label = "Person Walking"
+#                 elif class_name == "Sitting":
+#                     color = (255, 255, 0)  # Yellow for sitting
+#                     label = "Person Sitting"
+#                 elif class_name == "Fall Detected":
+#                     color = (0, 0, 255)  # Red for fall
+#                     label = "Person Fallen"
+#                     print("Fall detected! Checking conditions...")
+
+#                     # Track Y position to detect actual fall
+#                     if person_id in previous_y_positions:
+#                         y_difference = previous_y_positions[person_id] - y1
+#                         print(f"Y Difference: {y_difference}")  # Debugging
+
+#                         if y_difference > fall_threshold and not email_sent:
+#                             print("Fall detected! Sending email alert...")
+#                             alert_data = {"alert": "Person Fall Detected!"}
+#                             print(json.dumps(alert_data))  # Print JSON alert
+#                             putTextRect(frame, "Fall Detected!", (x1, y1 - 20), scale=2, thickness=3, colorR=color)
+
+#                             # Send email only once
+#                             if send_email("hashirkp13@gmail.com", "Fall Detected!", "A person has fallen. Immediate attention needed!"):
+#                                 email_sent = True
+
+                      
+#                 # Update previous Y position
+#                 previous_y_positions[person_id] = y1
+
+#                 # Draw bounding box and label using CVZone
+#                 cv2.rectangle(frame, (x1, y1), (x2, y2), color, 3)
+#                 putTextRect(frame, label, (x1, y1 - 10), scale=1, thickness=2, colorR=color)
+
+#     # Show video with detections
+#     cv2.imshow("Fall Detection System", frame)
+
+#     # Exit on 'q'
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+
+# # Release resources
+# cap.release()
+# cv2.destroyAllWindows()
+#---------------------------------
 import cv2
 import json
 from ultralytics import YOLO
@@ -1019,7 +1128,7 @@ def send_email(to_email, subject, message):
     msg.attach(MIMEText(message, "plain"))
 
     try:
-        server = smtplib.SMTP("mail.zoftcares.in", 25)  # Change SMTP settings if using another provider
+        server = smtplib.SMTP_SSL("mail.zoftcares.in", 465)  # Use SSL instead of SMTP
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, to_email, msg.as_string())
         server.quit()
@@ -1066,6 +1175,7 @@ while cap.isOpened():
                 if class_name == "Walking":
                     color = (0, 255, 0)  # Green for walking
                     label = "Person Walking"
+                    email_sent = False  # Reset email flag when person is walking
                 elif class_name == "Sitting":
                     color = (255, 255, 0)  # Yellow for sitting
                     label = "Person Sitting"
@@ -1085,9 +1195,9 @@ while cap.isOpened():
                             print(json.dumps(alert_data))  # Print JSON alert
                             putTextRect(frame, "Fall Detected!", (x1, y1 - 20), scale=2, thickness=3, colorR=color)
 
-                            # Send email only once
+                            # Send email only once per fall event
                             if send_email("hashirkp13@gmail.com", "Fall Detected!", "A person has fallen. Immediate attention needed!"):
-                                email_sent = True
+                                email_sent = True  
 
                 # Update previous Y position
                 previous_y_positions[person_id] = y1
@@ -1106,3 +1216,4 @@ while cap.isOpened():
 # Release resources
 cap.release()
 cv2.destroyAllWindows()
+

@@ -1189,7 +1189,7 @@ while cap.isOpened():
                         y_difference = previous_y_positions[person_id] - y1
                         print(f"Y Difference: {y_difference}")  # Debugging
 
-                        if y_difference > fall_threshold and not email_sent:
+                        if not email_sent:
                             print("Fall detected! Sending email alert...")
                             alert_data = {"alert": "Person Fall Detected!"}
                             print(json.dumps(alert_data))  # Print JSON alert

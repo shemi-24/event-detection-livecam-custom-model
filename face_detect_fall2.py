@@ -11,8 +11,8 @@ from email.mime.multipart import MIMEMultipart
 
 # Email alert function
 def send_email(to_email, subject, message):
-    sender_email = "support@zoftcares.in"  # Replace with your email
-    sender_password = "U_Dr*0R($q&?"  # Replace with your email password
+    sender_email = "support@zoftcares.in"  
+    sender_password = "U_Dr*0R($q&?"  
 
     msg = MIMEMultipart()
     msg["From"] = sender_email
@@ -55,7 +55,7 @@ known_face_names.append('Shameer')
 cap = cv2.VideoCapture('hafeefa2_fall.mp4')
 
 previous_y_positions = {}
-fall_threshold = 130  # Adjust as needed
+fall_threshold = 130  
 email_sent = False
 
 last_detected_person="Unknown"

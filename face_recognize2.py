@@ -20,7 +20,7 @@ known_face_encoding.append(known_person2_encoding)
 known_face_names.append('hafeefa') # append 1 argument olu idka 2 enam ndekil [] ith idnm
 known_face_names.append('shameer')
 #initialize the webcam
-video_capture=cv2.VideoCapture('hafeefa2_fall.mp4')
+video_capture=cv2.VideoCapture(0)
 if not video_capture.isOpened():
     print("error:video not opened")
     exit()

@@ -61,3 +61,6 @@ ultralytics
 ultralytics-thop
 urllib3
 wheel
+MTCNN
+FaceNet
+keras-facenet
